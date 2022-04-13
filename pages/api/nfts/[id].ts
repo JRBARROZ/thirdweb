@@ -2,11 +2,11 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import {
   doc,
-  setDoc,
   where,
   getDocs,
   query,
   deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { colRef, db } from "../../../firebase.config";
 import INfts from "../../../models/types";
@@ -35,8 +35,12 @@ export default async function handler(
       res.status(200).json({ msg: "Deletado com sucesso!" });
       break;
     case "PUT":
-      console.log(req.query);
-      res.status(200);
+      await updateDoc(doc(colRef, req.query.id.toString()), {
+        name: req.body.name,
+        image: req.body.image,
+        userAddress: req.body.userAddress,
+      });
+      res.status(200).send(200);
       break;
   }
 }

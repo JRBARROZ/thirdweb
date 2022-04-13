@@ -7,18 +7,26 @@ import { motion } from "framer-motion";
 import { useMutation, useQuery, QueryClient } from "react-query";
 import instance from "../axios.config";
 import INfts from "../models/types";
-import { XCircleIcon } from "@heroicons/react/solid";
-const client = new QueryClient();
+import { XCircleIcon, PencilIcon } from "@heroicons/react/solid";
+interface IUpdateNFTS {
+  id: string | undefined;
+  data: INfts;
+}
 const Home: NextPage = () => {
   const [name, setName] = React.useState<string>("");
   const [img, setImg] = React.useState<string>("");
   const [data, setData] = React.useState<INfts[]>([]);
+  const [update, setUpdate] = React.useState<string | undefined>(undefined);
   const connectWithMetamask = useMetamask();
   const address = useAddress();
   const disconnect = useDisconnect();
   const variants = {
     open: { opacity: 1 },
     closed: { x: -100, opacity: 0 },
+  };
+  //Update Service
+  const updateService = async ({ id, data }: IUpdateNFTS) => {
+    return instance.put<string, INfts>(`/${id}`, data);
   };
   //Mutations
   const nftMutation = useMutation<INfts, Error, INfts>((data) => {
@@ -27,20 +35,43 @@ const Home: NextPage = () => {
   const nftMutationDelete = useMutation((id: string) => {
     return instance.delete(`/${id}`);
   });
+  const nftMutationUpdate = useMutation(updateService);
   function handleSubmit() {
-    nftMutation.mutate(
-      {
-        name: name,
-        image: img,
-        userAddress: address,
-      },
-      {
-        onSuccess: () => {
-          console.log("success");
-          nftsQueries.refetch();
+    if (!update) {
+      nftMutation.mutate(
+        {
+          name: name,
+          image: img,
+          userAddress: address,
         },
-      }
-    );
+        {
+          onSuccess: () => {
+            nftsQueries.refetch();
+          },
+        }
+      );
+    } else {
+      nftMutationUpdate.mutate(
+        {
+          id: update,
+          data: {
+            name: name,
+            image: img,
+            userAddress: address,
+          },
+        },
+        {
+          onSettled: () => {
+            setName("");
+            setImg("");
+            setUpdate(undefined);
+          },
+          onSuccess:() => {
+            nftsQueries.refetch();
+          }
+        }
+      );
+    }
   }
   //Queries
   const nftsQueries = useQuery<INfts[]>(
@@ -119,7 +150,11 @@ const Home: NextPage = () => {
                   onClick={handleSubmit}
                   disabled={nftMutation.isLoading}
                 >
-                  {nftMutation.isLoading ? "Adding..." : "Add new NFT"}
+                  {nftMutation.isLoading
+                    ? "Adding..."
+                    : !update
+                    ? "Add new NFT"
+                    : "Update NFT"}
                 </button>
               </motion.div>
               <p className=" text-tertiary text-center font-medium text-xl mb-5">
@@ -147,7 +182,15 @@ const Home: NextPage = () => {
 
                           <p>{nft.name}</p>
                         </div>
-                        <div>
+                        <div className="flex space-x-1">
+                          <PencilIcon
+                            className="h-5 w-5 text-secondary hover:scale-125 cursor-pointer transition-all"
+                            onClick={() => {
+                              setName(nft.name);
+                              setImg(nft.image);
+                              setUpdate(nft.id);
+                            }}
+                          />
                           <XCircleIcon
                             className="h-5 w-5 text-error hover:scale-125 cursor-pointer transition-all"
                             onClick={() =>
