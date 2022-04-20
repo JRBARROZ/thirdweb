@@ -37,7 +37,8 @@ export default async function handler(
     case "PUT":
       await updateDoc(doc(colRef, req.query.id.toString()), {
         name: req.body.name,
-        image: req.body.image,
+        level: req.body.level,
+        kinds: req.body.kinds,
         userAddress: req.body.userAddress,
       });
       res.status(200).send(200);

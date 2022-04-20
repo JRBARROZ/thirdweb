@@ -8,9 +8,9 @@ module.exports = {
   theme: {
     colors: {
       error: "#ffa1a1",
-      primary: "#42218A",
-      secondary: "#00ADB7",
-      tertiary: "#DE3DD8",
+      primary: "#0A285F",
+      secondary: "#0075BE",
+      tertiary: "#FFCC00",
       black: "#18161A",
       white: "#fff",
       rgba: "rgba(255,255,255, .1)",

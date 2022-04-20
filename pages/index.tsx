@@ -6,17 +6,22 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useMutation, useQuery, QueryClient } from "react-query";
 import instance from "../axios.config";
-import INfts from "../models/types";
+import INfts, { IKinds } from "../models/types";
 import { XCircleIcon, PencilIcon } from "@heroicons/react/solid";
 interface IUpdateNFTS {
   id: string | undefined;
   data: INfts;
 }
-const Home: NextPage = () => {
+interface IServerSideProps {
+  kinds: IKinds[];
+}
+const Home = ({ kinds }: IServerSideProps) => {
   const [name, setName] = React.useState<string>("");
   const [img, setImg] = React.useState<string>("");
+  const [level, setLevel] = React.useState<string>("");
   const [data, setData] = React.useState<INfts[]>([]);
   const [update, setUpdate] = React.useState<string | undefined>(undefined);
+  const [kind, setKind] = React.useState<any>([]);
   const connectWithMetamask = useMetamask();
   const address = useAddress();
   const disconnect = useDisconnect();
@@ -41,8 +46,9 @@ const Home: NextPage = () => {
       nftMutation.mutate(
         {
           name: name,
-          image: img,
           userAddress: address,
+          kinds: kind,
+          level: level,
         },
         {
           onSuccess: () => {
@@ -56,8 +62,9 @@ const Home: NextPage = () => {
           id: update,
           data: {
             name: name,
-            image: img,
             userAddress: address,
+            kinds: kind,
+            level: level,
           },
         },
         {
@@ -66,9 +73,9 @@ const Home: NextPage = () => {
             setImg("");
             setUpdate(undefined);
           },
-          onSuccess:() => {
+          onSuccess: () => {
             nftsQueries.refetch();
-          }
+          },
         }
       );
     }
@@ -90,6 +97,10 @@ const Home: NextPage = () => {
       nftsQueries.refetch();
     }
   }, [address]);
+  const handleChange = ({ target }: React.ChangeEvent<HTMLSelectElement>) => {
+    let value = Array.from(target.selectedOptions, (option) => option.value);
+    setKind(value);
+  };
   return (
     <>
       <div className="flex relative mt-10">
@@ -123,22 +134,39 @@ const Home: NextPage = () => {
               variants={variants}
               animate={address ? "open" : "closed"}
             >
-              <p>NFT - Image:</p>
-              <input
-                type={"text"}
+              <p>Kind :</p>
+              <select
+                name="cars"
+                id="cars"
+                multiple
                 className=" text-secondary p-2 rounded-md bg-rgba outline-none"
-                value={img}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setImg(e.target.value)
-                }
-              ></input>
-              <p>NFT - Name:</p>
+                value={kind}
+                onChange={handleChange}
+              >
+                {kinds.map((kind) => {
+                  return (
+                    <option key={kind.id} value={kind.id}>
+                      {kind.type}
+                    </option>
+                  );
+                })}
+              </select>
+              <p>Name :</p>
               <input
                 type={"text"}
                 className=" text-secondary p-2 rounded-md  bg-rgba outline-none"
                 value={name}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setName(e.target.value)
+                }
+              ></input>
+              <p>Level :</p>
+              <input
+                type={"number"}
+                className=" text-secondary p-2 rounded-md  bg-rgba outline-none"
+                value={level}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setLevel(e.target.value)
                 }
               ></input>
               <motion.div>
@@ -153,12 +181,12 @@ const Home: NextPage = () => {
                   {nftMutation.isLoading
                     ? "Adding..."
                     : !update
-                    ? "Add new NFT"
-                    : "Update NFT"}
+                    ? "Add new pokemon"
+                    : "Update pokemon"}
                 </button>
               </motion.div>
               <p className=" text-tertiary text-center font-medium text-xl mb-5">
-                My NFTS
+                My Pokemons
               </p>
               <div className="h-72 overflow-auto p-2 flex flex-col gap-2 spac">
                 {!!data.length &&
@@ -169,17 +197,6 @@ const Home: NextPage = () => {
                         className="text-secondary bg-white bg-opacity-10 p-6 rounded-xl flex justify-between items-center"
                       >
                         <div className="flex gap-8 items-center">
-                          {!!nft.image && (
-                            <div>
-                              <Image
-                                src={nft.image}
-                                width={50}
-                                height={50}
-                                className="rounded-xl"
-                              />
-                            </div>
-                          )}
-
                           <p>{nft.name}</p>
                         </div>
                         <div className="flex space-x-1">
@@ -187,7 +204,7 @@ const Home: NextPage = () => {
                             className="h-5 w-5 text-secondary hover:scale-125 cursor-pointer transition-all"
                             onClick={() => {
                               setName(nft.name);
-                              setImg(nft.image);
+                              setLevel(nft.level);
                               setUpdate(nft.id);
                             }}
                           />
@@ -213,5 +230,13 @@ const Home: NextPage = () => {
     </>
   );
 };
+export async function getServerSideProps() {
+  const { data } = await instance.get<IKinds>("/");
+  return {
+    props: {
+      kinds: data,
+    }, // will be passed to the page component as props
+  };
+}
 
 export default Home;

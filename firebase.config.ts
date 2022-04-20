@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { collection, getFirestore } from "firebase/firestore";
+import { collection, getFirestore, writeBatch, doc } from "firebase/firestore";
 const firebaseConfig = {
   apiKey: "AIzaSyB-4MVVX3SILd1Dca13L_YePyjfko1o7B4",
   authDomain: "muriverse.firebaseapp.com",
@@ -13,7 +13,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const colRef = collection(db, "nfts");
-export {
-  colRef,
-  db,
-};
+const colKindRef = collection(db, "kinds");
+//seed kinds
+const kindTypes = ["Water", "Fire", "Dark", "Eletric", "Plant", "Poison"];
+const batchKind = writeBatch(db);
+kindTypes.map((type) => {
+  console.log(type);
+  return batchKind.set(doc(colKindRef, type.toLowerCase()), { type: type });
+});
+batchKind.commit();
+export { colRef, db, colKindRef };

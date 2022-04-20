@@ -1,8 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { doc, setDoc } from "firebase/firestore";
-import { colRef, db } from "../../../firebase.config";
-import INfts from "./types";
+import { doc, getDocs, setDoc } from "firebase/firestore";
+import { colRef, db, colKindRef } from "../../../firebase.config";
+import INfts from "../../../models/types";
 
 interface ExtendedNextApiRequest extends NextApiRequest {
   body: INfts;
@@ -12,12 +12,18 @@ export default function handler(
   res: NextApiResponse
 ) {
   async function handleGet() {
-    return res.send({ name: "amazing!" });
+    const data: any = [];
+    const querySnapshot = await getDocs(colKindRef);
+    querySnapshot.forEach((doc) => {
+      data.push({ id: doc.id, type: doc.data().type });
+    });
+    return res.status(200).json(data);
   }
   async function handlePost() {
     await setDoc(doc(colRef), {
       name: req.body.name,
-      image: req.body.image,
+      level: req.body.level,
+      kinds: req.body.kind,
       userAddress: req.body.userAddress,
     });
   }
