@@ -1,0 +1,127 @@
+<div className="m-auto z-10 items-center flex gap-6 max-w-screen-xl w-full justify-around">
+          <div className="flex flex-col gap-5">
+            <motion.div
+              className=""
+              variants={variants}
+              animate={address ? "open" : "closed"}
+            >
+              {
+                <p className=" text-tertiary text-center font-medium text-xl mb-5">
+                  You're In XD
+                </p>
+              }
+              {
+                <p className=" text-secondary text-center bg-white bg-opacity-10 p-6 rounded-xl ">
+                  {address || "Logout ..."}
+                </p>
+              }
+            </motion.div>
+            <button
+              className=" border px-8 py-4 rounded-md bg-primary bg-opacity-25 border-tertiary hover:scale-110 transition-all"
+              onClick={() => (address ? disconnect() : connectWithMetamask())}
+            >
+              {address ? "Sign Out :(" : "Sign In With Metamask"}
+            </button>
+            <motion.div
+              className="flex flex-col gap-5"
+              variants={variants}
+              animate={address ? "open" : "closed"}
+            >
+              <p>Kind :</p>
+              <select
+                name="cars"
+                id="cars"
+                multiple
+                className=" text-secondary p-2 rounded-md bg-rgba outline-none"
+                value={kind}
+                onChange={handleChange}
+              >
+                {kinds.map((kind) => {
+                  return (
+                    <option key={kind.id} value={kind.id}>
+                      {kind.type}
+                    </option>
+                  );
+                })}
+              </select>
+              <p>Name :</p>
+              <input
+                type={"text"}
+                className=" text-secondary p-2 rounded-md  bg-rgba outline-none"
+                value={name}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setName(e.target.value)
+                }
+              ></input>
+              <p>Level :</p>
+              <input
+                type={"number"}
+                className=" text-secondary p-2 rounded-md  bg-rgba outline-none"
+                value={level}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setLevel(e.target.value)
+                }
+              ></input>
+              <motion.div>
+                <button
+                  className={`border px-8 py-4 rounded-md w-full bg-primary bg-opacity-25 border-tertiary hover:scale-110 transition-all ${
+                    nftMutation.isLoading &&
+                    " disabled:bg-rgba disabled:border-none"
+                  }`}
+                  onClick={handleSubmit}
+                  disabled={nftMutation.isLoading}
+                >
+                  {nftMutation.isLoading
+                    ? "Adding..."
+                    : !update
+                    ? "Add new pokemon"
+                    : "Update pokemon"}
+                </button>
+              </motion.div>
+              <p className=" text-tertiary text-center font-medium text-xl mb-5">
+                My Pokemons
+              </p>
+              <div className="h-72 overflow-auto p-2 flex flex-col gap-2 spac">
+                {!!data.length &&
+                  data.map((nft) => {
+                    return (
+                      <div
+                        key={nft.id}
+                        className="text-secondary bg-white bg-opacity-10 p-6 rounded-xl flex justify-between items-center"
+                      >
+                        <div className="flex gap-8 items-center">
+                          <p>{nft.name}</p>
+                        </div>
+                        <div className="flex  gap-7 mx-5">
+                          {nft &&
+                            nft.kinds?.map((item) => {
+                              return <div className=" text-tertiary">{item}</div>;
+                            })}
+                        </div>
+                        <div className="flex space-x-1">
+                          <PencilIcon
+                            className="h-5 w-5 text-secondary hover:scale-125 cursor-pointer transition-all"
+                            onClick={() => {
+                              setName(nft.name);
+                              setLevel(nft.level);
+                              setUpdate(nft.id);
+                            }}
+                          />
+                          <XCircleIcon
+                            className="h-5 w-5 text-error hover:scale-125 cursor-pointer transition-all"
+                            onClick={() =>
+                              nftMutationDelete.mutate(nft.id || "", {
+                                onSuccess: () => {
+                                  nftsQueries.refetch();
+                                },
+                              })
+                            }
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </motion.div>
+          </div>
+        </div>
