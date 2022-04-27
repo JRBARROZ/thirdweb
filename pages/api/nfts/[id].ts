@@ -17,12 +17,15 @@ export default async function handler(
 ) {
   switch (req.method) {
     case "GET":
+
       const nftsQuery = query(colRef, where("userAddress", "==", req.query.id));
       const nfts: INfts[] = [];
       const querySnapshot = await getDocs(nftsQuery);
       querySnapshot.forEach((doc) => {
         nfts.push({ ...(doc.data() as INfts), id: doc.id });
       });
+      console.log("Getinho", req.query.id);
+      console.log(nfts);
       res.json(nfts);
       break;
     case "DELETE":

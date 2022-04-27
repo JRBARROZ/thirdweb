@@ -23,7 +23,7 @@ export default function handler(
     await setDoc(doc(colRef), {
       name: req.body.name,
       level: req.body.level,
-      kinds: req.body.kind,
+      kinds: req.body.kinds,
       userAddress: req.body.userAddress,
     });
   }

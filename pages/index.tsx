@@ -199,6 +199,12 @@ const Home = ({ kinds }: IServerSideProps) => {
                         <div className="flex gap-8 items-center">
                           <p>{nft.name}</p>
                         </div>
+                        <div className="flex  gap-7 mx-5">
+                          {nft &&
+                            nft.kinds?.map((item) => {
+                              return <div className=" text-tertiary">{item}</div>;
+                            })}
+                        </div>
                         <div className="flex space-x-1">
                           <PencilIcon
                             className="h-5 w-5 text-secondary hover:scale-125 cursor-pointer transition-all"

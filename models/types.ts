@@ -4,7 +4,7 @@ export default interface INfts {
   // image: string;
   level: string;
   userAddress: string | undefined;
-  kinds?: IKinds;
+  kinds?: IKinds[];
 }
 export interface IKinds {
   id?: string;
