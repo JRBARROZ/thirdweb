@@ -1,9 +1,18 @@
 import React from "react";
 import { IContextProps, IContextProviderProps } from "./types";
-export const LoginContext = React.createContext<IContextProps>(
-  {} as IContextProps
-);
+
+const initialProps: IContextProps = {
+  address: "",
+  setAddress: () => {},
+};
+
+export const LoginContext = React.createContext<IContextProps>(initialProps);
 
 export const LoginProvider = ({ children }: IContextProviderProps) => {
-  return <LoginContext.Provider value={{}}>{children}</LoginContext.Provider>;
+  const [address, setAddress] = React.useState<string>("");
+  return (
+    <LoginContext.Provider value={{ address, setAddress }}>
+      {children}
+    </LoginContext.Provider>
+  );
 };

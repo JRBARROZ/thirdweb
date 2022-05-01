@@ -26,14 +26,14 @@ export default function handler(
       kinds: req.body.kinds,
       userAddress: req.body.userAddress,
     });
+    return res.status(200).json("Criado com sucesso!");
   }
-  async function handleDelete() {}
-  const controllers: any = {
-    get: handleGet(),
-    post: handlePost(),
-    delete: handleDelete(),
-  };
-  if (req.method) {
-    return controllers[req.method];
+  switch (req.method) {
+    case "GET":
+      return handleGet();
+    case "POST":
+      return handlePost();
+    default:
+      return res.status(404).json("Not Found");
   }
 }

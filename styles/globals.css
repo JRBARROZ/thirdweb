@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .bubble{
+    @apply rounded-full absolute w-44 h-44 -z-10
+  }
+  select:required:invalid {
+    color: gray;
+  }
+}

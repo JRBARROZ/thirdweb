@@ -1,12 +1,11 @@
-export default interface INfts {
+export default interface IPokemon {
   name: string;
   id?: string;
-  // image: string;
   level: string;
   userAddress: string | undefined;
-  kinds?: IKinds[];
+  kinds: IPokemonKind[];
 }
-export interface IKinds {
+export interface IPokemonKind {
   id?: string;
   type: string;
 }
