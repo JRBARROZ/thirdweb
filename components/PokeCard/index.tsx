@@ -10,16 +10,24 @@ import React, { useContext } from "react";
 import { IPokeCardProps } from "./types";
 import { usePokeMutation } from "../../services/usePokeMutations";
 import { GlobalContext } from "../../contexts/GlobalContext";
+import Image from "next/image";
 
 function PokeCard({ name = "", level = 0, id, types = [] }: IPokeCardProps) {
   const { deletePokemonMutation } = usePokeMutation();
   const globalContext = useContext(GlobalContext);
   return (
     <motion.div
+      key={id}
       animate={{ opacity: 1 }}
-      exit={"exit"}
-      className="p-8 bg-white rounded-md bg-opacity-5 transition-all hover:bg-opacity-10 hover:cursor-pointer gap-2 flex flex-1 flex-col card"
+      exit={{ opacity: 0 }}
+      className="p-8 bg-white overflow-hidden relative rounded-md bg-opacity-5 transition-all hover:bg-opacity-10 hover:cursor-pointer gap-2 flex flex-1 flex-col card w-full"
     >
+      <img
+        src={"/pokball.png"}
+        width={80}
+        height={80}
+        className="absolute -bottom-5 -left-5 -z-10 opacity-5  -rotate-12"
+      />
       <div className="flex flex-wrap justify-between items-center ">
         <p className=" font-bold">{name}</p>
         <div className="flex gap-2">
@@ -43,7 +51,10 @@ function PokeCard({ name = "", level = 0, id, types = [] }: IPokeCardProps) {
         <div className="flex flex-wrap gap-4">
           {types.map((type) => {
             return (
-              <div className="rounded-lg bg-red-400 bg-opacity-5 text-xs flex-1 p-4">
+              <div
+                key={type.type}
+                className="rounded-lg bg-red-400 bg-opacity-5 text-xs flex-1 p-4"
+              >
                 <p className=" text-center">{type}</p>
               </div>
             );
