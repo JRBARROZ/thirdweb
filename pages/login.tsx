@@ -4,11 +4,24 @@ import { CubeTransparentIcon } from "@heroicons/react/solid";
 import { useAddress, useMetamask } from "@thirdweb-dev/react";
 import { LoginContext } from "../contexts/LoginContext";
 import { useRouter } from "next/router";
-
+import { motion } from "framer-motion";
+import Notifier from "../components/Notifier";
+const variants = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+  },
+  exit: {
+    opacity: 0,
+  },
+};
 const Login: NextPage<any> = ({}) => {
   const [loading, setLoading] = React.useState<boolean>(false);
   const { setAddress } = React.useContext(LoginContext);
   const connectWithMetamask = useMetamask();
+
   const address = useAddress();
   const router = useRouter();
   React.useEffect(() => {
@@ -19,20 +32,28 @@ const Login: NextPage<any> = ({}) => {
       }, 2000);
     }
   }, [address]);
+  const AnimatedCubeLogo = motion(CubeTransparentIcon);
   return (
     <>
-      <div className="text-white w-screen h-screen flex justify-center items-center relative ">
-        <div className="">
+      <motion.div className="text-white w-screen h-screen flex justify-center items-center relative before:absolute before:top-0 before:left-0 before:w-screen before:h-screen before:bg-slate-900 before:bg-opacity-95 before:backdrop-blur-sm bg-cover bg-poke-bg">
+        <div className=" z-40">
           <div className="flex gap-2 items-center flex-col justify-center">
-            <CubeTransparentIcon className="w-12 h-12" />
+            <AnimatedCubeLogo
+              animate={{ rotate: 360 }}
+              className="w-12 h-12"
+              transition={{
+                duration: loading ? 0.8 : 1,
+                repeat: loading ? Infinity : 0,
+              }}
+            />
             <h1 className=" text-2xl font-bold text-red-500">PoCrypt</h1>
             <p className=" max-w-md text-center ">
               An amazing Pokemon Crypto App
             </p>
             <p className=" max-w-xl text-center ">
               Welcome to PoCrypt, Sign in with your{" "}
-              <span className="text-red-500 font-bold">MetaMask Wallet</span> to Get
-              Started
+              <span className="text-red-500 font-bold">MetaMask Wallet</span> to
+              Get Started
             </p>
             <button
               className={`mt-4 py-4 px-8 rounded-md transition-all ${
@@ -45,11 +66,9 @@ const Login: NextPage<any> = ({}) => {
                   setLoading(true);
                   connectWithMetamask()
                     .then((data: any) => {
-                      setAddress(data.data.account);
+                      setAddress(data.data?.account || "");
                     })
-                    .catch((err) => {
-                      setLoading(false);
-                    })
+                    .catch((err) => {})
                     .finally(() => {
                       setLoading(false);
                     });
@@ -59,7 +78,7 @@ const Login: NextPage<any> = ({}) => {
               {!loading && address && "Baam, You're in! Redirecting.."}
               {!loading && !address && (
                 <>
-                  Sign in With Matamask
+                  Sign in With MetaMask
                   <img
                     src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg"
                     width={30}
@@ -70,7 +89,7 @@ const Login: NextPage<any> = ({}) => {
             </button>
           </div>
         </div>
-      </div>
+      </motion.div>
     </>
   );
 };

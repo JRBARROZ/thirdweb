@@ -9,12 +9,11 @@ const firebaseConfig = {
   appId: "1:259249757692:web:0d9791117541de47bba679",
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const colRef = collection(db, "nfts");
-const colKindRef = collection(db, "kinds");
-//seed kinds
+const colRef = collection(db, "pokemons");
+const colKindRef = collection(db, "types");
+
 // const kindTypes = ["Water", "Fire", "Dark", "Eletric", "Plant", "Poison"];
 // const batchKind = writeBatch(db);
 // kindTypes.map((type) => {
@@ -22,4 +21,5 @@ const colKindRef = collection(db, "kinds");
 //   return batchKind.set(doc(colKindRef, type.toLowerCase()), { type: type });
 // });
 // batchKind.commit();
+
 export { colRef, db, colKindRef };

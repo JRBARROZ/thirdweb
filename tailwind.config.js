@@ -5,9 +5,12 @@ module.exports = {
   ],
   theme: {
     extend: {
-      colors:{
-        black:"#2c2f33"
-      }
+      backgroundImage: {
+        'poke-bg': "url('/pokemon.jpeg')",
+      },
+      colors: {
+        black: "#2c2f33",
+      },
     },
   },
   plugins: [],

@@ -24,7 +24,7 @@ export default function handler(
       name: req.body.name,
       level: req.body.level,
       kinds: req.body.kinds,
-      userAddress: req.body.userAddress,
+      userAddress: req.headers.authorization,
     });
     return res.status(200).json("Criado com sucesso!");
   }

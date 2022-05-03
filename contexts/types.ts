@@ -12,6 +12,10 @@ export interface IContextProviderProps {
 export interface IGlobalContextProps {
   pokemonKind: IPokemonKind[];
   setPokemonKind: React.Dispatch<React.SetStateAction<IPokemonKind[]>>;
+  cardDelete: boolean;
+  setCardDelete: React.Dispatch<React.SetStateAction<boolean>>;
+  pokemonEdit: string | number;
+  setPokemonEdit: React.Dispatch<React.SetStateAction<string | number>>;
 }
 
 export interface IGlobalContextProviderProps {

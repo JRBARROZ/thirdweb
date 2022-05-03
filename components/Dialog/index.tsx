@@ -1,27 +1,31 @@
 import { XIcon } from "@heroicons/react/solid";
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
+import { IDialogProps } from "./types";
+const variants = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+  },
+  exit: {
+    opacity: 0,
+  },
+};
 function Dialog({ children, open, onClose, title }: IDialogProps) {
-  const variants = {
-    hidden: {
-      opacity: 0,
-    },
-    visible: {
-      opacity: 1,
-    },
-    exit: {
-      opacity: 0,
-    },
-  };
+  React.useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [open]);
   return (
-    <AnimatePresence
-      initial={false}
-      exitBeforeEnter={true}
-      onExitComplete={() => null}
-    >
+    <AnimatePresence exitBeforeEnter={true} onExitComplete={() => null}>
       {!!open ? (
         <motion.div
-          className="w-screen h-screen absolute top-0 left-0 bg-slate-800 backdrop-blur-lg bg-opacity-50 flex items-center justify-center"
+          className="w-full h-full fixed top-0 left-0 bg-slate-800 backdrop-blur-lg bg-opacity-50 flex items-center justify-center z-50"
           initial="hidden"
           variants={variants}
           animate="visible"

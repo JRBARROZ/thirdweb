@@ -17,15 +17,15 @@ export default async function handler(
 ) {
   switch (req.method) {
     case "GET":
-
-      const nftsQuery = query(colRef, where("userAddress", "==", req.query.id));
+      const nftsQuery = query(
+        colRef,
+        where("userAddress", "==", req.headers.authorization)
+      );
       const nfts: INfts[] = [];
       const querySnapshot = await getDocs(nftsQuery);
       querySnapshot.forEach((doc) => {
         nfts.push({ ...(doc.data() as INfts), id: doc.id });
       });
-      console.log("Getinho", req.query.id);
-      console.log(nfts);
       res.json(nfts);
       break;
     case "DELETE":
@@ -42,7 +42,7 @@ export default async function handler(
         name: req.body.name,
         level: req.body.level,
         kinds: req.body.kinds,
-        userAddress: req.body.userAddress,
+        userAddress: req.headers.authorization,
       });
       res.status(200).send(200);
       break;

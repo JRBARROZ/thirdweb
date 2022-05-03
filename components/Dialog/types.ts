@@ -1,6 +1,6 @@
-interface IDialogProps {
+export interface IDialogProps {
   children: React.ReactNode;
   open: boolean;
-  title?: string;
+  title: string;
   onClose: () => void;
 }
