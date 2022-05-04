@@ -72,6 +72,7 @@ function Form({ data }: IFormProps) {
       );
       setUpdate(true);
     }
+    return () => setPokemonEdit("");
   }, []);
   const handleClose = (type: string) => {
     setChoosedTypes((choosedTypes) =>
