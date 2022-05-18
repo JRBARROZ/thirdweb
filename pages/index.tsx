@@ -12,7 +12,12 @@ import {
 } from "react-query";
 import instance from "../axios.config";
 import INfts, { IPokemonKind } from "../models/types";
-import { XCircleIcon, PencilIcon, PlusIcon } from "@heroicons/react/solid";
+import {
+  XCircleIcon,
+  PencilIcon,
+  PlusIcon,
+  SearchIcon,
+} from "@heroicons/react/solid";
 import { LoginContext } from "../contexts/LoginContext";
 import SearchBar from "../components/SearchBar";
 import Dialog from "../components/Dialog";
@@ -31,9 +36,11 @@ const Home = ({ kinds }: IServerSideProps) => {
   const [open, setOpen] = React.useState<boolean>(false);
   const { setPokemonKind, cardDelete, pokemonEdit } = useContext(GlobalContext);
   const { getPokemonQuery } = usePokeQuery();
+  const [search, setSearch] = React.useState<string>("");
   const [updatePokemon, setUpdatePokemon] = React.useState<
     IPokemon | undefined
   >(undefined);
+  const [searchArray, setSearchArray] = React.useState<INfts[] | undefined>();
   React.useEffect(() => {
     setPokemonKind(kinds);
   }, []);
@@ -46,7 +53,31 @@ const Home = ({ kinds }: IServerSideProps) => {
     } else {
     }
   }, [pokemonEdit]);
+  React.useEffect(() => {
+    setSearchArray(getPokemonQuery.data);
+  }, [getPokemonQuery.data]);
 
+  React.useEffect(() => {
+    const searchTimeout = setTimeout(() => {
+      console.log("Search Time!");
+      if (search) {
+        setSearchArray(
+          getPokemonQuery.data?.filter((pokemon) => {
+            if (
+              pokemon.name.toLocaleLowerCase().includes(search.toLowerCase())
+            ) {
+              return pokemon;
+            }
+          })
+        );
+      } else {
+        setSearchArray(getPokemonQuery.data);
+      }
+    }, 300);
+    return () => {
+      clearTimeout(searchTimeout);
+    };
+  }, [search]);
   return (
     <>
       <Notifier
@@ -71,11 +102,23 @@ const Home = ({ kinds }: IServerSideProps) => {
         >
           <PlusIcon className="w-6" />
         </div>
-        <SearchBar />
+        <div className="flex max-w-sm w-full transition-all items-center">
+          <input
+            className="w-full outline-none rounded-l-md py-2 px-4 bg-white bg-opacity-5 focus:bg-opacity-10 transition-all"
+            placeholder="Search Pokemon.."
+            value={search}
+            onChange={({ target }) => {
+              setSearch(target.value);
+            }}
+          ></input>
+          <div className="flex flex-grow bg-white bg-opacity-10 h-full px-5 rounded-r-lg">
+            <SearchIcon className="w-6" />
+          </div>
+        </div>
       </div>
       <div className="grid md:grid-cols-4 sm:grid-cols-2 mt-5 mb-10 gap-4">
         <AnimatePresence>
-          {getPokemonQuery.data?.map((pokemon, index) => (
+          {searchArray?.map((pokemon, index) => (
             <PokeCard
               id={pokemon.id || ""}
               name={pokemon.name}
